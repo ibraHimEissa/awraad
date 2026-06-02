@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../data/book_data.dart';
+import '../onboarding/onboarding_tour.dart';
 import '../state/book_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
@@ -31,19 +32,33 @@ class _ReaderScreenState extends State<ReaderScreen> {
   late final PageController _pageController;
   late final BookController _controller;
 
+  // Anchors for the first-launch guided tour.
+  final _kMenu = GlobalKey();
+  final _kBookmark = GlobalKey();
+  final _kFullscreen = GlobalKey();
+  final _kCounter = GlobalKey();
+  final _kSection = GlobalKey();
+  final _kPager = GlobalKey();
+  final _kPrev = GlobalKey();
+  final _kNotes = GlobalKey();
+  final _kJump = GlobalKey();
+  final _kSearch = GlobalKey();
+  final _kNext = GlobalKey();
+
   PdfDocument? _document;
   bool _fullscreen = false;
   bool _zoomed = false;
   bool _multiTouch = false;
   int _activePointers = 0;
   bool _syncingFromController = false;
+  bool _showTour = false;
+  bool _tourStarted = false;
 
   @override
   void initState() {
     super.initState();
     _controller = context.read<BookController>();
-    _pageController =
-        PageController(initialPage: _controller.currentPage - 1);
+    _pageController = PageController(initialPage: _controller.currentPage - 1);
     _controller.addListener(_onControllerChanged);
     _loadDocument();
     // Keep the screen awake the whole time the app is open.
@@ -55,7 +70,23 @@ class _ReaderScreenState extends State<ReaderScreen> {
         _controller.clearResumeMessage();
         showAppSnack(context, msg, icon: Icons.auto_stories_rounded);
       }
+      _maybeStartTour();
     });
+  }
+
+  /// Opens the guided tour once, on the very first launch, after the chrome
+  /// has been laid out so the spotlight anchors can be measured.
+  void _maybeStartTour() {
+    if (_tourStarted || !mounted || !_controller.shouldShowOnboarding) return;
+    _tourStarted = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _showTour = true);
+    });
+  }
+
+  void _finishTour() {
+    _controller.markOnboardingSeen();
+    if (mounted) setState(() => _showTour = false);
   }
 
   Future<void> _loadDocument() async {
@@ -64,10 +95,12 @@ class _ReaderScreenState extends State<ReaderScreen> {
   }
 
   void _onControllerChanged() {
+    // Covers the case where the controller finishes loading after first frame.
+    _maybeStartTour();
     final target = _controller.currentPage - 1;
     final current = _pageController.hasClients
         ? (_pageController.page ?? _pageController.initialPage.toDouble())
-            .round()
+              .round()
         : _pageController.initialPage;
     if (current != target && _pageController.hasClients) {
       _syncingFromController = true;
@@ -131,62 +164,103 @@ class _ReaderScreenState extends State<ReaderScreen> {
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _handleBack();
       },
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: AppColors.background,
-        drawerEnableOpenDragGesture: !_zoomed,
-        drawer: Consumer<BookController>(
-          builder: (context, c, _) => TocDrawer(
-            currentPage: c.currentPage,
-            bookmarks: c.bookmarks,
-            onSelectPage: (page) {
-              Navigator.pop(context);
-              c.jumpToPage(page);
-            },
-            onRemoveBookmark: c.removeBookmark,
-            onClose: () => Navigator.pop(context),
-          ),
-        ),
-        body: Container(
-          decoration:
-              const BoxDecoration(gradient: AppColors.backgroundGradient),
-          child: Column(
-            children: [
-              if (!_fullscreen)
-                Consumer<BookController>(
-                  builder: (context, c, _) => AppHeader(
-                    currentPage: c.currentPage,
-                    isBookmarked: c.isCurrentBookmarked,
-                    onMenu: () => _scaffoldKey.currentState?.openDrawer(),
-                    onBookmarkToggle: c.toggleBookmark,
-                    onFullscreen: _toggleFullscreen,
-                  ),
-                ),
-              if (!_fullscreen)
-                Consumer<BookController>(
-                  builder: (context, c, _) =>
-                      SectionIndicator(currentPage: c.currentPage),
-                ),
-              Expanded(child: _buildPager()),
-            ],
-          ),
-        ),
-        bottomNavigationBar: _fullscreen
-            ? null
-            : Consumer<BookController>(
-                builder: (context, c, _) => BottomNavBar(
-                  currentPage: c.currentPage,
-                  hasNote: c.currentHasNote,
-                  onPrev: () => c.jumpToPage(c.currentPage - 1),
-                  onNext: () => c.jumpToPage(c.currentPage + 1),
-                  onNotes: () => showNotesSheet(context,
-                      page: c.currentPage, onSelectPage: c.jumpToPage),
-                  onJump: () => showJumpDialog(context,
-                      onConfirm: c.jumpToPage),
-                  onSearch: () => showSearchSheet(context,
-                      onSelectPage: c.jumpToPage),
-                ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: AppColors.background,
+            drawerEnableOpenDragGesture: !_zoomed,
+            drawer: Consumer<BookController>(
+              builder: (context, c, _) => TocDrawer(
+                currentPage: c.currentPage,
+                bookmarks: c.bookmarks,
+                onSelectPage: (page) {
+                  Navigator.pop(context);
+                  c.jumpToPage(page);
+                },
+                onRemoveBookmark: c.removeBookmark,
+                onClose: () => Navigator.pop(context),
               ),
+            ),
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: AppColors.backgroundGradient,
+              ),
+              child: Column(
+                children: [
+                  if (!_fullscreen)
+                    Consumer<BookController>(
+                      builder: (context, c, _) => AppHeader(
+                        currentPage: c.currentPage,
+                        isBookmarked: c.isCurrentBookmarked,
+                        onMenu: () => _scaffoldKey.currentState?.openDrawer(),
+                        onBookmarkToggle: c.toggleBookmark,
+                        onFullscreen: _toggleFullscreen,
+                        menuKey: _kMenu,
+                        bookmarkKey: _kBookmark,
+                        fullscreenKey: _kFullscreen,
+                        counterKey: _kCounter,
+                      ),
+                    ),
+                  if (!_fullscreen)
+                    Consumer<BookController>(
+                      builder: (context, c, _) => KeyedSubtree(
+                        key: _kSection,
+                        child: SectionIndicator(currentPage: c.currentPage),
+                      ),
+                    ),
+                  Expanded(
+                    child: KeyedSubtree(key: _kPager, child: _buildPager()),
+                  ),
+                ],
+              ),
+            ),
+            bottomNavigationBar: _fullscreen
+                ? null
+                : Consumer<BookController>(
+                    builder: (context, c, _) => BottomNavBar(
+                      currentPage: c.currentPage,
+                      hasNote: c.currentHasNote,
+                      onPrev: () => c.jumpToPage(c.currentPage - 1),
+                      onNext: () => c.jumpToPage(c.currentPage + 1),
+                      onNotes: () => showNotesSheet(
+                        context,
+                        page: c.currentPage,
+                        onSelectPage: c.jumpToPage,
+                      ),
+                      onJump: () =>
+                          showJumpDialog(context, onConfirm: c.jumpToPage),
+                      onSearch: () =>
+                          showSearchSheet(context, onSelectPage: c.jumpToPage),
+                      prevKey: _kPrev,
+                      notesKey: _kNotes,
+                      jumpKey: _kJump,
+                      searchKey: _kSearch,
+                      nextKey: _kNext,
+                    ),
+                  ),
+          ),
+          if (_showTour)
+            Positioned.fill(
+              child: OnboardingTour(
+                steps: buildTourSteps(
+                  menu: _kMenu,
+                  bookmark: _kBookmark,
+                  fullscreen: _kFullscreen,
+                  counter: _kCounter,
+                  section: _kSection,
+                  pager: _kPager,
+                  prev: _kPrev,
+                  notes: _kNotes,
+                  jump: _kJump,
+                  search: _kSearch,
+                  next: _kNext,
+                ),
+                onFinish: _finishTour,
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -234,7 +308,9 @@ class _ReaderScreenState extends State<ReaderScreen> {
               bottom: 28,
               left: 0,
               right: 0,
-              child: Center(child: _ExitFullscreenPill(onTap: _toggleFullscreen)),
+              child: Center(
+                child: _ExitFullscreenPill(onTap: _toggleFullscreen),
+              ),
             ),
         ],
       ),
@@ -261,7 +337,11 @@ class _ExitFullscreenPill extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.fullscreen_exit_rounded, color: AppColors.gold, size: 20),
+              Icon(
+                Icons.fullscreen_exit_rounded,
+                color: AppColors.gold,
+                size: 20,
+              ),
               SizedBox(width: 8),
               Text(
                 'خروج من ملء الشاشة',

@@ -17,6 +17,11 @@ class BottomNavBar extends StatelessWidget {
     required this.onNotes,
     required this.onJump,
     required this.onSearch,
+    this.prevKey,
+    this.notesKey,
+    this.jumpKey,
+    this.searchKey,
+    this.nextKey,
   });
 
   final int currentPage;
@@ -27,6 +32,13 @@ class BottomNavBar extends StatelessWidget {
   final VoidCallback onJump;
   final VoidCallback onSearch;
 
+  // Optional anchors used by the first-launch guided tour.
+  final GlobalKey? prevKey;
+  final GlobalKey? notesKey;
+  final GlobalKey? jumpKey;
+  final GlobalKey? searchKey;
+  final GlobalKey? nextKey;
+
   @override
   Widget build(BuildContext context) {
     final bottomPad = MediaQuery.of(context).padding.bottom;
@@ -34,7 +46,7 @@ class BottomNavBar extends StatelessWidget {
     final canNext = currentPage < BookData.totalPages;
 
     return Container(
-      padding: EdgeInsets.only(bottom: bottomPad, top: 6, left: 18, right: 18),
+      padding: EdgeInsets.only(bottom: bottomPad, top: 4, left: 18, right: 18),
       decoration: const BoxDecoration(
         color: AppColors.headerFooter,
         border: Border(top: BorderSide(color: AppColors.goldDeep, width: 0.8)),
@@ -43,39 +55,54 @@ class BottomNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Previous page — right side
-          _ArrowButton(
-            icon: Icons.chevron_left_rounded,
-            enabled: canPrev,
-            onTap: onPrev,
+          KeyedSubtree(
+            key: prevKey,
+            child: _ArrowButton(
+              icon: Icons.chevron_left_rounded,
+              enabled: canPrev,
+              onTap: onPrev,
+            ),
           ),
           // Center cluster
           Row(
             children: [
-              _CircleAction(
-                icon: hasNote
-                    ? Icons.edit_note_rounded
-                    : Icons.note_add_outlined,
-                background: AppColors.surface,
-                iconColor: hasNote ? AppColors.goldBright : AppColors.gold,
-                showDot: hasNote,
-                onTap: onNotes,
+              KeyedSubtree(
+                key: notesKey,
+                child: _CircleAction(
+                  icon: hasNote
+                      ? Icons.edit_note_rounded
+                      : Icons.note_add_outlined,
+                  background: AppColors.surface,
+                  iconColor: hasNote ? AppColors.goldBright : AppColors.gold,
+                  showDot: hasNote,
+                  onTap: onNotes,
+                ),
               ),
               const SizedBox(width: 12),
-              _PageButton(page: currentPage, onTap: onJump),
+              KeyedSubtree(
+                key: jumpKey,
+                child: _PageButton(page: currentPage, onTap: onJump),
+              ),
               const SizedBox(width: 12),
-              _CircleAction(
-                icon: Icons.search_rounded,
-                background: AppColors.emerald,
-                iconColor: Colors.white,
-                onTap: onSearch,
+              KeyedSubtree(
+                key: searchKey,
+                child: _CircleAction(
+                  icon: Icons.search_rounded,
+                  background: AppColors.emerald,
+                  iconColor: Colors.white,
+                  onTap: onSearch,
+                ),
               ),
             ],
           ),
           // Next page — left side
-          _ArrowButton(
-            icon: Icons.chevron_right_rounded,
-            enabled: canNext,
-            onTap: onNext,
+          KeyedSubtree(
+            key: nextKey,
+            child: _ArrowButton(
+              icon: Icons.chevron_right_rounded,
+              enabled: canNext,
+              onTap: onNext,
+            ),
           ),
         ],
       ),

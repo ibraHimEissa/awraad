@@ -34,12 +34,13 @@ class _BookPageViewState extends State<BookPageView>
   @override
   void initState() {
     super.initState();
-    _anim = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 220),
-    )..addListener(() {
-        if (_zoomAnim != null) _tc.value = _zoomAnim!.value;
-      });
+    _anim =
+        AnimationController(
+          vsync: this,
+          duration: const Duration(milliseconds: 220),
+        )..addListener(() {
+          if (_zoomAnim != null) _tc.value = _zoomAnim!.value;
+        });
     _tc.addListener(_onTransform);
   }
 
@@ -49,9 +50,10 @@ class _BookPageViewState extends State<BookPageView>
   }
 
   void _animateTo(Matrix4 target) {
-    _zoomAnim = Matrix4Tween(begin: _tc.value, end: target).animate(
-      CurvedAnimation(parent: _anim, curve: Curves.easeOutCubic),
-    );
+    _zoomAnim = Matrix4Tween(
+      begin: _tc.value,
+      end: target,
+    ).animate(CurvedAnimation(parent: _anim, curve: Curves.easeOutCubic));
     _anim.forward(from: 0);
   }
 
@@ -63,8 +65,7 @@ class _BookPageViewState extends State<BookPageView>
       final pos = _doubleTapDetails?.localPosition ?? Offset.zero;
       const scale = 2.5;
       final target = Matrix4.identity()
-        ..translateByDouble(
-            -pos.dx * (scale - 1), -pos.dy * (scale - 1), 0, 1)
+        ..translateByDouble(-pos.dx * (scale - 1), -pos.dy * (scale - 1), 0, 1)
         ..scaleByDouble(scale, scale, 1, 1);
       _animateTo(target);
     }
@@ -85,10 +86,10 @@ class _BookPageViewState extends State<BookPageView>
       onDoubleTapDown: (d) => _doubleTapDetails = d,
       onDoubleTap: _handleDoubleTap,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         decoration: BoxDecoration(
           color: AppColors.parchment,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.35),
@@ -115,9 +116,7 @@ class _BookPageViewState extends State<BookPageView>
                     pageNumber: widget.pageNumber,
                     alignment: Alignment.center,
                     backgroundColor: AppColors.parchment,
-                    decoration: const BoxDecoration(
-                      color: AppColors.parchment,
-                    ),
+                    decoration: const BoxDecoration(color: AppColors.parchment),
                   ),
           ),
         ),
@@ -129,7 +128,6 @@ class _BookPageViewState extends State<BookPageView>
 class _PageLoading extends StatelessWidget {
   const _PageLoading();
   @override
-  Widget build(BuildContext context) => const Center(
-        child: CircularProgressIndicator(color: AppColors.goldDeep),
-      );
+  Widget build(BuildContext context) =>
+      const Center(child: CircularProgressIndicator(color: AppColors.goldDeep));
 }

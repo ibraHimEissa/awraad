@@ -22,7 +22,7 @@ class SectionIndicator extends StatelessWidget {
 
     return Container(
       color: AppColors.headerFooter,
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 3, 16, 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

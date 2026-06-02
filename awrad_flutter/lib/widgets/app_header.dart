@@ -16,6 +16,10 @@ class AppHeader extends StatelessWidget {
     required this.onMenu,
     required this.onBookmarkToggle,
     required this.onFullscreen,
+    this.menuKey,
+    this.bookmarkKey,
+    this.fullscreenKey,
+    this.counterKey,
   });
 
   final int currentPage;
@@ -24,12 +28,18 @@ class AppHeader extends StatelessWidget {
   final VoidCallback onBookmarkToggle;
   final VoidCallback onFullscreen;
 
+  // Optional anchors used by the first-launch guided tour.
+  final GlobalKey? menuKey;
+  final GlobalKey? bookmarkKey;
+  final GlobalKey? fullscreenKey;
+  final GlobalKey? counterKey;
+
   @override
   Widget build(BuildContext context) {
     final topPad = MediaQuery.of(context).padding.top;
 
     return Container(
-      padding: EdgeInsets.only(top: topPad, left: 6, right: 6, bottom: 6),
+      padding: EdgeInsets.only(top: topPad, left: 6, right: 6, bottom: 3),
       decoration: const BoxDecoration(
         color: AppColors.headerFooter,
         border: Border(
@@ -40,11 +50,13 @@ class AppHeader extends StatelessWidget {
         children: [
           // Leading (right in RTL): index menu + bookmark
           IconButton(
+            key: menuKey,
             onPressed: onMenu,
             icon: const Icon(Icons.menu_book_rounded, color: AppColors.gold),
             tooltip: 'الفهرس',
           ),
           IconButton(
+            key: bookmarkKey,
             onPressed: onBookmarkToggle,
             icon: Icon(
               isBookmarked ? Icons.bookmark : Icons.bookmark_border,
@@ -57,8 +69,8 @@ class AppHeader extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SufiLogo(size: 30, showGlow: false),
-                const SizedBox(height: 2),
+                const SufiLogo(size: 26, showGlow: false),
+                const SizedBox(height: 1),
                 Text(
                   BookData.headerTitle,
                   style: const TextStyle(
@@ -73,11 +85,13 @@ class AppHeader extends StatelessWidget {
           ),
           // Trailing (left in RTL): fullscreen + page counter
           IconButton(
+            key: fullscreenKey,
             onPressed: onFullscreen,
             icon: const Icon(Icons.fullscreen, color: AppColors.textMuted),
             tooltip: 'ملء الشاشة',
           ),
           Padding(
+            key: counterKey,
             padding: const EdgeInsets.only(left: 6, right: 2),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,

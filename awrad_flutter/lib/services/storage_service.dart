@@ -7,6 +7,7 @@ class StorageService {
   static const _kLastPage = 'last_page';
   static const _kBookmarks = 'bookmarks';
   static const _kNotes = 'notes';
+  static const _kOnboardingSeen = 'onboarding_seen';
 
   SharedPreferences? _prefs;
 
@@ -20,12 +21,16 @@ class StorageService {
     await _prefs?.setInt(_kLastPage, page);
   }
 
+  /// Whether the first-launch guided tour has already been shown.
+  bool get onboardingSeen => _prefs?.getBool(_kOnboardingSeen) ?? false;
+
+  Future<void> saveOnboardingSeen() async {
+    await _prefs?.setBool(_kOnboardingSeen, true);
+  }
+
   List<Bookmark> get bookmarks {
     final raw = _prefs?.getStringList(_kBookmarks) ?? const [];
-    return raw
-        .map(Bookmark.decode)
-        .whereType<Bookmark>()
-        .toList()
+    return raw.map(Bookmark.decode).whereType<Bookmark>().toList()
       ..sort((a, b) => a.page.compareTo(b.page));
   }
 
@@ -41,10 +46,7 @@ class StorageService {
     if (raw == null || raw.isEmpty) return [];
     try {
       final list = (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
-      return list
-          .map(Note.fromJson)
-          .whereType<Note>()
-          .toList()
+      return list.map(Note.fromJson).whereType<Note>().toList()
         ..sort((a, b) => a.page.compareTo(b.page));
     } catch (_) {
       return [];

@@ -23,10 +23,15 @@ class BookController extends ChangeNotifier {
   /// One-shot message shown on launch when resuming a previous page.
   String? resumeMessage;
 
+  /// True until the first-launch guided tour has been completed or skipped.
+  bool _shouldShowOnboarding = false;
+  bool get shouldShowOnboarding => _shouldShowOnboarding;
+
   Timer? _saveDebounce;
 
   Future<void> load() async {
     await _storage.init();
+    _shouldShowOnboarding = !_storage.onboardingSeen;
     _bookmarks = _storage.bookmarks;
     _notes = _storage.notes;
     final saved = _storage.lastPage;
@@ -39,8 +44,7 @@ class BookController extends ChangeNotifier {
 
   TocSection get currentSection => BookData.sectionForPage(_currentPage);
 
-  bool get isCurrentBookmarked =>
-      _bookmarks.any((b) => b.page == _currentPage);
+  bool get isCurrentBookmarked => _bookmarks.any((b) => b.page == _currentPage);
 
   bool isBookmarked(int page) => _bookmarks.any((b) => b.page == page);
 
@@ -108,6 +112,13 @@ class BookController extends ChangeNotifier {
 
   void clearResumeMessage() {
     resumeMessage = null;
+  }
+
+  /// Marks the guided tour as seen so it never auto-opens again.
+  void markOnboardingSeen() {
+    if (!_shouldShowOnboarding) return;
+    _shouldShowOnboarding = false;
+    _storage.saveOnboardingSeen();
   }
 
   void _scheduleSave() {

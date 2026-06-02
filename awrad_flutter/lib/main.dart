@@ -33,11 +33,24 @@ class AwradApp extends StatelessWidget {
         title: 'كتاب الأوراد',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.dark(),
-        // The whole app is right-to-left.
-        builder: (context, child) => Directionality(
-          textDirection: TextDirection.rtl,
-          child: child!,
-        ),
+        // The whole app is right-to-left. We also clamp the system text scale
+        // so very large / very small device font settings can't break the
+        // fixed-size chrome — keeping the layout consistent on every screen.
+        builder: (context, child) {
+          final mq = MediaQuery.of(context);
+          return MediaQuery(
+            data: mq.copyWith(
+              textScaler: mq.textScaler.clamp(
+                minScaleFactor: 0.9,
+                maxScaleFactor: 1.15,
+              ),
+            ),
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: child!,
+            ),
+          );
+        },
         home: const SplashScreen(),
       ),
     );
