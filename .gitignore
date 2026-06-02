@@ -16,3 +16,11 @@
 local.properties
 .env
 debug.keystore
+
+# OCR pipeline artifacts (huge / regenerable — keep run_ocr.py & raw index)
+ocr/venv/
+ocr/pages/
+ocr/ocr_run.log
+
+# Claude Code harness artifacts
+.claude/

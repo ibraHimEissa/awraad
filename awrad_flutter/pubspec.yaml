@@ -1,0 +1,68 @@
+name: awrad
+description: "كتاب الأوراد البرهانية — تطبيق قراءة أوراد الطريقة البرهانية الدسوقية الشاذلية."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # PDF rendering (Android / iOS / web / desktop) — MIT licensed
+  pdfrx: ^1.0.93
+
+  # Local persistence for last page, theme, bookmarks
+  shared_preferences: ^2.3.2
+
+  # State management (ViewModel-like ChangeNotifier)
+  provider: ^6.1.2
+
+  # Keep the screen awake while the app is open (never auto-lock)
+  wakelock_plus: ^1.2.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+  # Generates platform launcher icons from the logo
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/pdf/book.pdf
+    - assets/images/logo.png
+    - assets/search/search_index.json
+
+  fonts:
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Cairo-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Cairo-Bold.ttf
+          weight: 700
+    - family: Amiri
+      fonts:
+        - asset: assets/fonts/Amiri-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Amiri-Bold.ttf
+          weight: 700
+
+# Launcher icon configuration (run: dart run flutter_launcher_icons)
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/ic_icon.png"
+  adaptive_icon_background: "assets/icon/ic_background.png"
+  adaptive_icon_foreground: "assets/icon/ic_foreground.png"
+  remove_alpha_ios: true
