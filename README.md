@@ -1,22 +1,40 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# تطبيقات الطريقة البرهانية الدسوقية الشاذلية
 
-# Run and deploy your AI Studio app
+مستودع يضمّ تطبيقَي قراءة بنظام **Flutter** (أندرويد / iOS)، بهوية بصرية واحدة
+(أخضر زمردي وذهبي، خطوط Cairo و Amiri، تصميم Material 3):
 
-This contains everything you need to run your app locally.
+| المشروع | الوصف |
+|---|---|
+| [`awrad_flutter/`](awrad_flutter/) | **كتاب الأوراد البرهانية** — قارئ الأوراد اليومية مع فهرس، بحث نصّي كامل (OCR)، إشارات مرجعية وملاحظات. |
+| [`diwan_sharab_alwasl/`](diwan_sharab_alwasl/) | **ديوان شراب الوصل** — ديوان الإمام فخر الدين الشيخ محمد عثمان عبده البرهاني (٩٥ قصيدة، ٢٦٨ صفحة) مع فهرس القصائد، بحث في ٢٬٦٨٢ بيتًا، تحديد البيت، إشارات وملاحظات. |
 
-View your app in AI Studio: https://ai.studio/apps/e48ea90f-fb21-4c77-9129-e26272bdb4a5
+> النسخة الأصلية المكتوبة بـ Kotlin (Android native) أُزيلت — كلا التطبيقين الآن بـ Flutter.
 
-## Run Locally
+## التشغيل
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+```bash
+cd awrad_flutter        # أو diwan_sharab_alwasl
+flutter pub get
+flutter run                    # تشغيل على جهاز/محاكي
+flutter build apk --release    # بناء APK
+```
 
+**المتطلبات:** Flutter SDK 3.11+ — راجع [flutter.dev](https://flutter.dev).
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
-# awraad
+## بنية المستودع
+
+```
+.
+├── awrad_flutter/        تطبيق كتاب الأوراد (Flutter)
+├── diwan_sharab_alwasl/  تطبيق ديوان شراب الوصل (Flutter)
+└── ocr/                  خط أنابيب الـ OCR لبناء فهرس بحث كتاب الأوراد
+    ├── run_ocr.py
+    └── search_index_raw.json
+```
+
+## الميزات المشتركة
+
+- قارئ PDF بتقليب يمين‑لشمال (كالكتاب)، تكبير بالأصابع/الضغط المزدوج، ووضع ملء الشاشة immersive.
+- بحث عربي متسامح (يتجاهل التشكيل والتطويل ويوحّد صور الحروف).
+- فهرس، إشارات مرجعية، ملاحظات على الصفحات، واستئناف من آخر موضع — محفوظة محليًا.
+- تصميم Material 3 غامق مريح للقراءة الليلية.

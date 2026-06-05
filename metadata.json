@@ -1,6 +1,0 @@
-{
-  "name": "كتاب الأوراد",
-  "description": "كتاب الأوراد البرهانية - تطبيق قراءة للأوراد والأوراد اليومية للطريقة البرهانية الدسوقية الشاذلية.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

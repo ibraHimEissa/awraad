@@ -1,26 +1,22 @@
-*.iml
-.gradle
-.kotlin
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+# ── OS / editor ──────────────────────────────────────────────────────────
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
-.env
-debug.keystore
+*.swp
+*.iml
+.idea/
 
-# OCR pipeline artifacts (huge / regenerable — keep run_ocr.py & raw index)
+# ── Build artifacts ──────────────────────────────────────────────────────
+# Each Flutter project keeps its own .gitignore for build/, .dart_tool/, etc.
+*.apk
+*.aab
+
+# ── OCR pipeline artifacts (huge / regenerable — keep run_ocr.py & raw index)
 ocr/venv/
 ocr/pages/
 ocr/ocr_run.log
 
-# Claude Code harness artifacts
+# ── Local tooling / agent harness artifacts ──────────────────────────────
 .claude/
+.agents/
+.codex/
+.sixth/
+.env
