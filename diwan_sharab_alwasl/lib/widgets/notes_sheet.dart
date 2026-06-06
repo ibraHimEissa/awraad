@@ -175,8 +175,10 @@ class _NotesSheetState extends State<_NotesSheet> {
               builder: (context, c, _) {
                 final notes = c.notes;
                 if (notes.isEmpty) return const SizedBox.shrink();
-                return Column(
+                return Flexible(
+                  child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     const OrnamentalDivider(),
                     const SizedBox(height: 8),
@@ -195,7 +197,7 @@ class _NotesSheetState extends State<_NotesSheet> {
                       child: ListView.separated(
                         shrinkWrap: true,
                         itemCount: notes.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 8),
+                        separatorBuilder: (_, __) => const SizedBox(height: 8),
                         itemBuilder: (context, i) => _NoteTile(
                           note: notes[i],
                           onTap: () {
@@ -207,6 +209,7 @@ class _NotesSheetState extends State<_NotesSheet> {
                       ),
                     ),
                   ],
+                  ),
                 );
               },
             ),

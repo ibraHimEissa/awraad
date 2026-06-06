@@ -95,8 +95,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       navigator.pushReplacement(
         PageRouteBuilder(
           transitionDuration: const Duration(milliseconds: 500),
-          pageBuilder: (_, _, _) => const ReaderScreen(),
-          transitionsBuilder: (_, anim, _, child) =>
+          pageBuilder: (_, __, ___) => const ReaderScreen(),
+          transitionsBuilder: (_, anim, __, child) =>
               FadeTransition(opacity: anim, child: child),
         ),
       );

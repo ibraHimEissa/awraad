@@ -153,7 +153,7 @@ class _SearchSheetState extends State<_SearchSheet> {
     return ListView.separated(
       shrinkWrap: true,
       itemCount: _results.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (context, i) {
         final hit = _results[i];
         final poem = BookData.poemById(hit.poemId);

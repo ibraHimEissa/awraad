@@ -53,8 +53,8 @@ class _SplashScreenState extends State<SplashScreen>
 
   PageRouteBuilder _fadeRoute(Widget page) => PageRouteBuilder(
     transitionDuration: const Duration(milliseconds: 600),
-    pageBuilder: (_, _, _) => page,
-    transitionsBuilder: (_, anim, _, child) =>
+    pageBuilder: (_, __, ___) => page,
+    transitionsBuilder: (_, anim, __, child) =>
         FadeTransition(opacity: anim, child: child),
   );
 
