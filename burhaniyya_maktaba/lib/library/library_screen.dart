@@ -279,7 +279,7 @@ class _BookCard extends StatelessWidget {
               ),
               const Padding(
                 padding: EdgeInsets.only(top: 30),
-                child: Icon(Icons.chevron_left_rounded,
+                child: Icon(Icons.chevron_right_rounded,
                     color: AppColors.textMuted),
               ),
             ],

@@ -37,7 +37,7 @@ class AppHeader extends StatelessWidget {
           children: [
             IconButton(
               onPressed: onBack,
-              icon: const Icon(Icons.arrow_forward_rounded),
+              icon: const Icon(Icons.arrow_back_rounded),
               tooltip: 'المكتبة',
               style: IconButton.styleFrom(foregroundColor: AppColors.textMuted),
             ),
